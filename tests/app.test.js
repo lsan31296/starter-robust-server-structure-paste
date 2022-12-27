@@ -1,7 +1,7 @@
 const request = require("supertest");
 const pastes = require("../src/data/pastes-data");
 const app = require("../src/app");
-const { response } = require("../src/app");
+//const { response } = require("../src/app");
 
 describe ("path /pastes", () => {
     //resets the pastes data prior to funning each test in the describe block
