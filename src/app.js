@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const pastes = require("./data/pastes-data");
-const pasteRouter = require("./pastes/pastes.router");//import router, 35.6
+const pastesRouter = require("./pastes/pastes.router");//import router, 35.6
+const usersRouter = require("./users/users.router");
 
 //will be adding this built-in middleware that adds a body property to the request
 app.use(express.json());
@@ -11,8 +12,10 @@ app.use("/pastes", (req, res) => {
   res.json({ data: pastes });//taking the pastes data and responding back to client with JSON
 });
 */
-//35.6, using route-handler function
-app.use("/pastes", pasteRouter);
+
+app.use("/users", usersRouter);;//35.7, using route-handler function
+app.use("/pastes", pastesRouter);//35.6, using route-handler function
+
 /*
 //notice the difference from code block above in comments is just app.use vs app.get(here), from 35.3
 app.get("/pastes", (req, res) => {

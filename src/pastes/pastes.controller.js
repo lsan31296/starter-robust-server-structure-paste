@@ -3,8 +3,9 @@
 const pastes = require("../data/pastes-data");
 
 function list(req, res) {
-    res.json({ data: pastes });
-}//responsible for simply listing resource
+  const { userId } = req.params;
+  res.json({ data: pastes.filter(userId ? paste => paste.user_id === Number(userId) : () => true) });
+}//responsible for simply listing resource, but can filter resources that match params from parent route, 35.7
 
 // Variable to hold the next ID, Because some IDs may already be used, find the largest assigned ID
 let lastPasteId = pastes.reduce((maxId, paste) => Math.max(maxId, paste.id), 0);
@@ -96,28 +97,28 @@ function pasteExists(req, res, next) {
     const { pasteId } = req.params;
     const foundPaste = pastes.find((paste) => paste.id === Number(pasteId));
     if (foundPaste) {
+        res.locals.paste = foundPaste;//passing data through the response.locals object, 35.7
         return next();
     }
     next({ status: 404, message: `Paste id not found: ${pasteId}`});
 }
 function read(req, res) {
-    const { pasteId } = req.params;
-    const foundPaste = pastes.find((paste) => paste.id === Number(pasteId));
-    res.json({ data: foundPaste });
+    //refactored code to pass data on from validator middleware function, 35.7
+    res.json({ data: res.locals.paste });
 }
 
 //Adding update-paste handler
 function update (req, res) {
-    const { pasteId } = req.params;
-    const foundPaste = pastes.find((paste) => paste.id === Number(pasteId));
+    //refactored code, 35.7
+    const paste = res.locals.paste;
     const { data: { name, syntax, expiration, exposure, text } = {} } = req.body;
     //Update the paste
-    foundPaste.name = name;
-    foundPaste.syntax = syntax;
-    foundPaste.expiration = expiration;
-    foundPaste.exposure = exposure;
-    foundPaste.text = text;
-    res.json({ data: foundPaste });
+    paste.name = name;
+    paste.syntax = syntax;
+    paste.expiration = expiration;
+    paste.exposure = exposure;
+    paste.text = text;
+    res.json({ data: paste });
 }
 
 //Adding delete-paste handler
